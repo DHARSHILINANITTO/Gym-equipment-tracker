@@ -1,0 +1,83 @@
+package gym;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+public class EquipmentForm extends JFrame {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTextField nameField, quantityField, statusField;
+    private JButton addButton, viewButton;
+
+    public EquipmentForm() {
+        setTitle("Gym Equipment Form");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new GridLayout(5, 2, 10, 10));
+
+        add(new JLabel("Equipment Name:"));
+        nameField = new JTextField();
+        add(nameField);
+
+        add(new JLabel("Quantity:"));
+        quantityField = new JTextField();
+        add(quantityField);
+
+        add(new JLabel("Status (Working/Repair):"));
+        statusField = new JTextField();
+        add(statusField);
+
+        addButton = new JButton("Add Equipment");
+        viewButton = new JButton("View Equipment List");
+
+        add(addButton);
+        add(viewButton);
+
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addEquipment();
+            }
+        });
+
+        viewButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new EquipmentList();
+            }
+        });
+
+        setVisible(true);
+    }
+
+    private void addEquipment() {
+        String name = nameField.getText();
+        String quantity = quantityField.getText();
+        String status = statusField.getText();
+
+        Connection conn = DBconnection.getConnection();
+        try {
+            String query = "INSERT INTO equipment (name, quantity, status) VALUES (?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, name);
+            stmt.setInt(2, Integer.parseInt(quantity));
+            stmt.setString(3, status);
+
+            int inserted = stmt.executeUpdate();
+            if (inserted > 0) {
+                JOptionPane.showMessageDialog(this, "Equipment added successfully!");
+                nameField.setText("");
+                quantityField.setText("");
+                statusField.setText("");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
+}
+
