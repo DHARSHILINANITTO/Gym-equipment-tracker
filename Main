@@ -1,0 +1,9 @@
+package gym;
+
+public class Main {
+    public static void main(String[] args) {
+        new EquipmentForm(); // To start Equipment Tracker
+        // new GymMemberForm(); // Uncomment this if you want Membership Form
+    }
+}
+
