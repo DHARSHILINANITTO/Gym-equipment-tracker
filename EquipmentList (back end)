@@ -1,0 +1,50 @@
+package gym;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+
+public class EquipmentList extends JFrame {
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public EquipmentList() {
+        setTitle("Equipment List");
+        setSize(500, 400);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        String[] columnNames = {"ID", "Name", "Quantity", "Status"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        JTable table = new JTable(model);
+        JScrollPane scrollPane = new JScrollPane(table);
+        add(scrollPane);
+
+        loadEquipmentData(model);
+
+        setVisible(true);
+    }
+
+    private void loadEquipmentData(DefaultTableModel model) {
+        Connection conn = DBconnection.getConnection();
+        try {
+            String query = "SELECT * FROM equipment";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                int quantity = rs.getInt("quantity");
+                String status = rs.getString("status");
+                model.addRow(new Object[]{id, name, quantity, status});
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
